@@ -1,0 +1,22 @@
+---
+options:
+  expires: false
+  length: 16
+  random: true
+store_options:
+  adapter: :Sequel
+  adapter_options:
+    :db: mysql2://trocla_host/trocla_db
+    :password: trocla_pass
+    :user: trocla_user
+    :table: trocla
+    :port: 3306
+    :expires: false # Need for trocla search
+api:
+  enable: true
+  setting:
+    :bind: 0.0.0.0
+    :port: 5678
+    :environment: ':production'
+  log_level: INFO
+  log_path: /var/log/troclapi/troclapi.log
