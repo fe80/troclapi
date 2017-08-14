@@ -236,6 +236,13 @@ api:
     :port: 5678
     :logging: Logger::DEBUG
   token: LFZuJhKchdkKV0wSa6yuprnxlA8UAPdMLaCXu
+  ldap:
+    :host: '127.0.0.1'
+    :base: 'OU=People,DC=local'
+    :auth:
+      :method: :simple
+      :username: 'CN=service.user,OU=Services,DC=local'
+      :password: secret
 ```
 
-Show [Sinatra documentation](http://www.sinatrarb.com/configuration.html) for available params, and [Logger](https://ruby-doc.org/stdlib-2.1.0/libdoc/logger/rdoc/Logger.html) for available log level
+Show [Sinatra documentation](http://www.sinatrarb.com/configuration.html) for available settings, and [Net::LDAP](http://www.rubydoc.info/gems/ruby-net-ldap/Net/LDAP) for ldap options (default filter sAMAccountName=username)
