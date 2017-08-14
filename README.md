@@ -1,12 +1,32 @@
 # troclapi
 
-Rest api for trocla usage
-
-WIP
+Basic api for trocla usage
 
 ## Usage
 
 Show [Trocla documentation](https://github.com/duritong/trocla) for all usage
+
+Please, show trocla documatation for all params
+
+### Login
+
+#### POST /login
+Login with Ldap or admin token
+
+With token:
+```JSON
+{
+  "token": "LFchdkKV0wSa6yuprnxlA8UAPdMLaCXu"
+}
+```
+
+Ldap connection
+```JSON
+{
+  "login": "my.user",
+  "password": "mypass"
+}
+```
 
 ### create
 
@@ -194,7 +214,7 @@ Available Dockerfile example on docker\_example repository
 
 ```BASH
 docker build -t troclapi .
-docker run -d -p 5678:5678 -v /var/log/troclapi:/var/log/troclapi troclapi
+docker run -d -p 5678:5678 troclapi
 ```
 
 ## Configuration
@@ -214,12 +234,8 @@ api:
   setting: # Sinatra setting
     :bind: 0.0.0.0
     :port: 5678
-  log_level: INFO
-  log: /var/log/troclapi/troclapi.log # Absolute or relative path
-  actions: # liste available actions, for all remove this param
-    - get
-    - format
-    - search
+    :logging: Logger::DEBUG
+  token: LFZuJhKchdkKV0wSa6yuprnxlA8UAPdMLaCXu
 ```
 
 Show [Sinatra documentation](http://www.sinatrarb.com/configuration.html) for available params, and [Logger](https://ruby-doc.org/stdlib-2.1.0/libdoc/logger/rdoc/Logger.html) for available log level
