@@ -1,46 +1,38 @@
-module Sinatra
-  module Troclapi
-    module V1
-      module Delete
-        def self.registered(app)
-          app.post '/v1/delete/' do
+class Troclapi < Sinatra::Base
+  helpers Sinatra::Troclapi::Delete::Helpers
 
-            data = read_json()
-            keys = data.delete('keys')
-            default_format = (data.delete('format') || 'plain')
+  post '/v1/delete/' do
+    data = read_json()
+    keys = data.delete('keys')
+    default_format = (data.delete('format') || 'plain')
 
-            result = []
+    result = []
+    keys?(keys)
 
-            keys.each do |k|
-              trocla_key = (k.delete('key') || '')
-              format = (k.delete('format') || default_format)
+    keys.each do |k|
+      trocla_key = (k.delete('key') || '')
+      format = (k.delete('format') || default_format)
 
-              if format?(format)
-                _hash = trocla_delete(trocla_key, format).merge({'key' => trocla_key})
+      _hash = if format?(format)
+                trocla_delete(trocla_key, format).merge({'key' => trocla_key})
               else
-                logger.debug "Bad format #{format} for key #{trocla_key}"
-                _hash = {'error' => 'Bad format', 'success' => false}
+                bad_format(trocla_key, format)
               end
 
-              result << _hash
-            end unless keys.nil?
+      result << _hash
+    end
 
-            result.to_json
-          end
+    result.to_json
+  end
 
-          app.delete '/v1/key/:trocla_key/:trocla_format' do
-            format = params.delete(:trocla_format)
-            trocla_key = params.delete(:trocla_key)
+  delete '/v1/key/:trocla_key/:trocla_format' do
+    format = params.delete(:trocla_format)
+    trocla_key = params.delete(:trocla_key)
 
-            if format?(format)
-              return trocla_delete(trocla_key, format).to_json
-            else
-              logger.debug "Bad format #{format} for key #{trocla_key}"
-              {'error' => 'Bad format', 'success' => false}.to_json
-            end
-          end
-        end
-      end
+    if format?(format)
+      trocla_delete(trocla_key, format).to_json
+    else
+      bad_format(trocla_key, format).to_json
     end
   end
 end
