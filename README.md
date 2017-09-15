@@ -1,12 +1,12 @@
-# troclapi
+# Troclapi
 
 Basic api for trocla usage
 
 ## Usage
 
-Show [Trocla documentation](https://github.com/duritong/trocla) for all usage
+See [Trocla documentation](https://github.com/duritong/trocla) for all usage
 
-Please, show trocla documatation for all params
+Please, see trocla documatation for all params
 
 ### Login
 
