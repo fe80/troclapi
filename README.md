@@ -30,7 +30,7 @@ Ldap connection
 
 ### create
 
-#### POST /v1/:key/:format
+#### POST /v2/key/:key/:format
 
 Create key with specific value
 
@@ -43,7 +43,7 @@ json example:
 }
 ```
 
-#### PUT /v1/create/
+#### POST /v2/create/
 
 Create multiple key with specific value
 
@@ -68,13 +68,13 @@ json example:
 
 ### get
 
-#### GET /v1/:key/:format
+#### GET /v2/key/:key/:format
 
 Get key value
 
-Using render format in url for select format (example: /v1/my\_x509\_key/x509/keyonly)
+Using render format in url for select format (example: /v2/my\_x509\_key/x509/keyonly)
 
-#### POST /v1/get/
+#### POST /v2/get/
 
 Get multiple key
 
@@ -97,7 +97,7 @@ json example:
 
 ### set
 
-#### PUT /v1/key/:key/:format
+#### PUT /v2/key/:key/:format
 
 Set key
 
@@ -108,7 +108,7 @@ json example:
 }
 ```
 
-#### POST /v1/set/
+#### POST /v2/set/
 
 Set multiple key
 
@@ -132,7 +132,7 @@ json example:
 
 ### reset
 
-#### PATCH /v1/key/:key/:format
+#### PATCH /v2/key/:key/:format
 
 Reset key
 
@@ -145,7 +145,7 @@ json example:
 }
 ```
 
-#### POST /v1/reset/
+#### POST /v2/reset/
 
 Reset multiple key
 
@@ -169,11 +169,11 @@ json example:
 
 ### delete
 
-#### DELETE /v1/:key/:format
+#### DELETE /v2/key/:key/:format
 
 Delete key
 
-#### POST /v1/delete/
+#### POST /v2/delete/
 
 Delete mutiple key
 
@@ -195,7 +195,7 @@ json example:
 
 ### search
 
-#### POST /v1/search/
+#### POST /v2/search/
 
 Search key with ruby regex format
 
@@ -211,11 +211,11 @@ json example:
 
 ### formats
 
-#### GET /v1/formats
+#### GET /v2/formats
 
 Return available trocla formats
 
-#### GET /v1/formats/:format
+#### GET /v2/formats/:format
 
 Return if formats is available
 
@@ -227,28 +227,28 @@ Return if formats is available
   "success": true
 }
 
-# curl -s -b /tmp/cookie troclapi.local/v1/key/toto/plain | jq
+# curl -s -b /tmp/cookie troclapi.local/v2/key/toto/plain | jq
 {
   "format": "plain",
   "value": "toto",
   "success": true
 }
 
-# curl -s -b /tmp/cookie -XPOST troclapi.local/v1/key/mysqlkey/mysql -d '' | jq
+# curl -s -b /tmp/cookie -XPOST troclapi.local/v2/key/mysqlkey/mysql -d '' | jq
 {
   "format": "mysql",
   "value": "*2B74D8F42C6EC26269106199686D2386A2E47D18",
   "success": true
 }
 
-# curl -s -b /tmp/cookie -XPOST troclapi.local/v1/key/mysqlkey/plain -d '' | jq
+# curl -s -b /tmp/cookie -XPOST troclapi.local/v2/key/mysqlkey/plain -d '' | jq
 {
   "format": "plain",
   "value": "ze.4D8{TM)*]m0CF",
   "success": true
 }
 
-# curl -s -b /tmp/cookie -XPOST troclapi.local/v1/get/ -d '{"keys": [{"key": "toto"},{"key": "titi"},{"key": "mysqlkey", "format": "mysql"},{"key": "mysqlkey", "format": "plain"}]}' | jq
+# curl -s -b /tmp/cookie -XPOST troclapi.local/v2/get/ -d '{"keys": [{"key": "toto"},{"key": "titi"},{"key": "mysqlkey", "format": "mysql"},{"key": "mysqlkey", "format": "plain"}]}' | jq
 [
   {
     "format": "plain",
@@ -307,7 +307,9 @@ api:
     - format
     - get
     - search
-  token: LFchdkKV0wSa6yuprnxlA8UAPdMLaCXu
+  tokens:
+    dev: LFchdkKV0wSa6yuprnxlA8UAPdMLaCXu
+    ansible: TRFgkHDFgh65KJHGhf5jHJg5KJgjhvg
   ldap:
     :host: '127.0.0.1'
     :base: 'OU=People,DC=local'

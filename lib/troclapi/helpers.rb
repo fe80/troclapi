@@ -1,11 +1,6 @@
 module Sinatra
   module Troclapi
     module Helpers
-
-      def authorize!
-        redirect(to('/login')) unless session[:user]
-      end
-
       def format?(format)
         if format.nil?
           logger.error 'Missing format, exiting...'
@@ -17,7 +12,6 @@ module Sinatra
           true
         end
       end
-
       def read_json
         begin
           JSON.parse request.body.read
@@ -25,7 +19,6 @@ module Sinatra
           {}
         end
       end
-
       def check_empty(h)
         _h = {}
         h.each do |k,v|
@@ -33,21 +26,20 @@ module Sinatra
         end
         _h
       end
-
       def rescue_return(e)
         logger.error e.message
         logger.debug e.backtrace.join("\n")
-        status 500
-        {:error => e.message, :success => false}
+        error(500, e.message)
       end
-
       def keys?(keys)
-        halt 200, { :success => false, :error => 'Missing keys' }.to_json if keys.nil?
+        error(400, 'Missing keys')
       end
-
       def bad_format(trocla_key, format)
         logger.debug "Bad format #{format} for key #{trocla_key}"
         {'error' => 'Bad format', 'success' => false}
+      end
+      def error(code, message)
+        halt code, { :success => false, :error => message }.to_json
       end
     end
   end

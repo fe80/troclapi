@@ -17,7 +17,7 @@ module Sinatra
             )
             if result[:value].nil?
               logger.debug "Get value for key #{trocla_key} on format #{format}"
-              result = {:error => 'Key not found on this format', :success => false}
+              error(200, 'Key not found on this format')
             else
               logger.debug "Get value for key #{trocla_key} on format #{format}"
               result[:success] = true

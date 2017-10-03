@@ -1,7 +1,7 @@
 class Troclapi < Sinatra::Base
   helpers Sinatra::Troclapi::Set::Helpers
 
-  post '/v1/set/' do
+  post '/v2/set/' do
     data = read_json()
     keys = data.delete('keys')
     default_format = (data.delete('format') || 'plain')
@@ -26,7 +26,7 @@ class Troclapi < Sinatra::Base
     result.to_json
   end
 
-  put '/v1/key/:trocla_key/:trocla_format' do
+  put '/v2/key/:trocla_key/:trocla_format' do
     format = params.delete(:trocla_format)
     trocla_key = params.delete(:trocla_key)
     data = read_json()

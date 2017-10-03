@@ -1,10 +1,11 @@
 class Troclapi < Sinatra::Base
-  helpers Sinatra::Troclapi::Delete::Helpers
+  helpers Sinatra::Troclapi::Get::Helpers
 
-  post '/v1/delete/' do
+  post '/v2/get/' do
     data = read_json()
     keys = data.delete('keys')
     default_format = (data.delete('format') || 'plain')
+    default_render = (data.delete('render') || '')
 
     result = []
     keys?(keys)
@@ -12,25 +13,30 @@ class Troclapi < Sinatra::Base
     keys.each do |k|
       trocla_key = (k.delete('key') || '')
       format = (k.delete('format') || default_format)
+      render = (k.delete('render') || default_render)
 
       _hash = if format?(format)
-                trocla_delete(trocla_key, format).merge({'key' => trocla_key})
+                trocla_get(trocla_key, format, render).merge({'key' => trocla_key})
               else
                 bad_format(trocla_key, format)
               end
 
+      _hash.delete('render')
+
       result << _hash
     end
-
     result.to_json
   end
 
-  delete '/v1/key/:trocla_key/:trocla_format' do
+
+  get '/v2/key/:trocla_key/:trocla_format/?:render?' do
+    render = {}
+    render['render'] = params.delete(:render)
     format = params.delete(:trocla_format)
     trocla_key = params.delete(:trocla_key)
 
     if format?(format)
-      trocla_delete(trocla_key, format).to_json
+      trocla_get(trocla_key, format, render).to_json
     else
       bad_format(trocla_key, format).to_json
     end

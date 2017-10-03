@@ -2,6 +2,9 @@ module Sinatra
   module Troclapi
     module Login
       module Helpers
+        def authorize!
+          redirect(to('/login')) unless session[:user]
+        end
         def ldap?(auth, username, password)
           require 'net/ldap'
 
@@ -11,7 +14,7 @@ module Sinatra
 
           base = (auth[:base] || '')
           raise 'Missing ldap base' if base.empty?
-          filter = (auth[:filter] || '(&(sAMAccountName={username}))').gsub('{username}', username)
+          filter = (auth[:filter] || '').gsub('{username}', username)
           ldap = Net::LDAP.new auth
           if ldap.bind
             logger.debug 'ldapsearch ' + base.to_s + filter.to_s
@@ -29,9 +32,18 @@ module Sinatra
               end
             end
           else
+            logger.debug 'Ldap connexion fail ' + ldap.inspect
             false
           end
           false
+        end
+        def check_token(token)
+          tokens = (settings.troclapi['tokens'] || {})
+          error(400, 'Missing tokens configuration, please see documentation') if tokens.empty?
+          tokens.each do |k,v|
+            return k if v == token
+          end
+          ''
         end
       end
     end

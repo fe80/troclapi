@@ -1,4 +1,7 @@
+require 'troclapi/helpers/login'
 class Troclapi < Sinatra::Base
+  helpers Sinatra::Troclapi::Login::Helpers
+
   post '/login' do
     data = read_json()
 
@@ -6,7 +9,7 @@ class Troclapi < Sinatra::Base
     username = (data.delete('username') || '')
     password = (data.delete('password') || '')
 
-    halt 400, { :success => false, :error => 'Missing token or username/passsword authentification. Please see documenation'}.to_json if token.empty? && (username.empty? || password.empty?)
+    error(400, 'Missing token or username/passsword authentification. Please see documenation') if token.empty? && (username.empty? || password.empty?)
 
     unless settings.troclapi['ldap'].nil? || (username.empty? || password.empty?)
       auth = settings.troclapi['ldap']
@@ -17,13 +20,19 @@ class Troclapi < Sinatra::Base
       end
     end
 
-    if settings.troclapi['token'] == token && session[:user].nil?
-      logger.debug 'Connexion succes with token'
-      session[:user] = 'token'
+    t = if token.empty?
+          ''
+        else
+          check_token(token)
+        end
+    logger.debug t
+    if !t.empty? && session[:user].nil?
+      logger.debug 'Connexion succes with ' + t.to_s + ' token'
+      session[:user] = t
       return { :success => true }.to_json
     elsif session[:user].nil?
-      logger.debug 'Bad or missing token: ' + token + ' ' +  settings.troclapi['token']
+      logger.debug 'Bad or missing token: ' + token
     end
-    { :success => false }.to_json
+    error(401, 'Bad authentification')
   end
 end

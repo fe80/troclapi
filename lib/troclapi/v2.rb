@@ -4,7 +4,7 @@ class Troclapi < Sinatra::Base
 
   actions.each do |action|
     require "troclapi/helpers/#{action}" unless action == 'format'
-    require "troclapi/v1/#{action}"
+    require "troclapi/v2/#{action}"
   end
 
 end

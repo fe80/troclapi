@@ -1,4 +1,4 @@
-$: << File.expand_path(File.dirname(__FILE__) + '/lib')
+$: << 'lib'
 
 require 'troclapi'
 Troclapi.run!

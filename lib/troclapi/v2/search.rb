@@ -1,7 +1,7 @@
 class Troclapi < Sinatra::Base
   helpers Sinatra::Troclapi::Search::Helpers
 
-  post '/v1/search/' do
+  post '/v2/search/' do
     data = read_json()
     keys = data.delete('keys')
     logger.debug "Search trocla key with json value #{keys.to_s}"

@@ -21,14 +21,14 @@ Gem::Specification.new do |s|
     'lib/troclapi/helpers/create.rb',
     'lib/troclapi/helpers/login.rb',
     'lib/troclapi/helpers/get.rb',
-    'lib/troclapi/v1.rb',
-    'lib/troclapi/v1/delete.rb',
-    'lib/troclapi/v1/format.rb',
-    'lib/troclapi/v1/set.rb',
-    'lib/troclapi/v1/search.rb',
-    'lib/troclapi/v1/reset.rb',
-    'lib/troclapi/v1/create.rb',
-    'lib/troclapi/v1/get.rb',
+    'lib/troclapi/v2.rb',
+    'lib/troclapi/v2/delete.rb',
+    'lib/troclapi/v2/format.rb',
+    'lib/troclapi/v2/set.rb',
+    'lib/troclapi/v2/search.rb',
+    'lib/troclapi/v2/reset.rb',
+    'lib/troclapi/v2/create.rb',
+    'lib/troclapi/v2/get.rb',
     'lib/troclapi/version.rb',
     'lib/troclapi.rb',
   ]
@@ -37,3 +37,4 @@ Gem::Specification.new do |s|
   s.license     = 'MIT'
   s.executables << 'troclapi'
 end
+
