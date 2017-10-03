@@ -1,10 +1,10 @@
 FROM ruby:2.4-alpine
 
-MAINTAINER Steffy FORT <steffy.fort@fr.clara.net>
+MAINTAINER Steffy FORT <steffyfort@gmail.com>
 
 RUN apk add --no-cache make build-base git mysql-dev
 
-RUN git clone -b develop https://git.adm.fr.clara.net/sfort/troclapi.git /usr/src/troclapi
+RUN git clone -b https://github.com/fe80/troclapi.git /usr/src/troclapi
 RUN bundle install --path vendor/bundle --gemfile=/usr/src/troclapi/Gemfile
 
 COPY troclarc.yaml /etc/troclarc.yaml
