@@ -1,6 +1,9 @@
 module Sinatra
   module Troclapi
     module Helpers
+      def trocla
+        $trocla ||= Trocla.new
+      end
       def format?(format)
         if format.nil?
           logger.error 'Missing format, exiting...'
@@ -22,7 +25,7 @@ module Sinatra
       def check_empty(h)
         _h = {}
         h.each do |k,v|
-          _h = {:error => "Missing #{k}", :success => false} if v.empty?
+          _h = error_render("Missing #{k}") if v.empty?
         end
         _h
       end
@@ -32,14 +35,17 @@ module Sinatra
         error(500, e.message)
       end
       def keys?(keys)
-        error(400, 'Missing keys')
+        error(400, 'Missing keys') if keys.nil? || keys.empty?
       end
       def bad_format(trocla_key, format)
         logger.debug "Bad format #{format} for key #{trocla_key}"
-        {'error' => 'Bad format', 'success' => false}
+        error_render('Bad format')
       end
       def error(code, message)
-        halt code, { :success => false, :error => message }.to_json
+        halt code, error_render(message).to_json
+      end
+      def error_render(message)
+        { :success => false, :error => message }
       end
     end
   end

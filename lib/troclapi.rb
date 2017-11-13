@@ -3,9 +3,7 @@ require 'logger'
 require 'trocla'
 require 'troclapi/helpers'
 require 'troclapi/login'
-require 'troclapi/v1'
 require 'troclapi/v2'
-require 'troclapi/trocla' # Monkey patch for search action
 require 'troclapi/version'
 
 class Troclapi < Sinatra::Base
@@ -34,17 +32,13 @@ class Troclapi < Sinatra::Base
     content_type :json
   end
 
-  before '/v1/*' do
-    authorize!
-  end
-
   before '/v2/*' do
     authorize!
   end
 
   not_found do
     status 404
-    { 'success' => false, 'error' => '404 Not found or bad method' }.to_json
+    { :success => false, :error => '404 Not found or bad method' }.to_json
   end
 
   helpers Sinatra::Troclapi::Helpers

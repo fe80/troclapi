@@ -8,7 +8,6 @@ module Sinatra
           return result unless result.empty?
           result[:format] = format
           begin
-            trocla = Trocla.new
             logger.info "#{session[:user]} DELETE #{trocla_key} #{format}"
             result[:value] = trocla.delete_password(
               trocla_key,
@@ -16,7 +15,7 @@ module Sinatra
             )
             if result[:value].nil?
               logger.debug "Delete value for key #{trocla_key} on format #{format} not found"
-              error(200, 'Key not found on this format')
+              return error_render('Key not found on this format')
             else
               logger.debug "Delete value for key #{trocla_key} on format #{format}"
               result[:success] = true

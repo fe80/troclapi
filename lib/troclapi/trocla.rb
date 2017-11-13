@@ -10,6 +10,10 @@ class Trocla::Stores::Moneta < Trocla::Store
     search_keys(key)
   end
 
+  def format(key)
+    moneta.fetch(key, {}).keys
+  end
+
   private
   def search_keys(key)
     _moneta = Moneta.new(store_config['adapter'], (store_config['adapter_options']||{}).merge({ :expires => false }))
@@ -30,5 +34,8 @@ end
 class Trocla
   def search_key(key)
     store.search(key)
+  end
+  def available_format(key, options={})
+    decrypt(store.format(key))
   end
 end

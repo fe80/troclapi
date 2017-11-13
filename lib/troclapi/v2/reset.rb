@@ -33,7 +33,7 @@ class Troclapi < Sinatra::Base
   patch '/v2/key/:trocla_key/:trocla_format' do
     format = params.delete(:trocla_format)
     trocla_key = params.delete(:trocla_key)
-    other_options = (params.clone || {})
+    other_options = read_json()
 
     logger.debug "Reset actions with query_string #{other_options}"
 

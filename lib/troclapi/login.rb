@@ -20,18 +20,14 @@ class Troclapi < Sinatra::Base
       end
     end
 
-    t = if token.empty?
-          ''
-        else
-          check_token(token)
-        end
-    logger.debug t
-    if !t.empty? && session[:user].nil?
+    t = token.empty? ? nil : check_token(token)
+    logger.debug t unless t.nil?
+    if !t.nil? && session[:user].nil?
       logger.debug 'Connexion succes with ' + t.to_s + ' token'
       session[:user] = t
       return { :success => true }.to_json
     elsif session[:user].nil?
-      logger.debug 'Bad or missing token: ' + token
+      logger.debug 'Bad or missing token: ' + t unless t.nil?
     end
     error(401, 'Bad authentification')
   end

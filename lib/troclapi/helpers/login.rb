@@ -3,6 +3,12 @@ module Sinatra
     module Login
       module Helpers
         def authorize!
+          unless request.env['HTTP_X_TOKEN'].nil?
+            t = request.env['HTTP_X_TOKEN']
+            u = check_token(t)
+            logger.debug 'Authentification with token header: ' + u
+            session[:user] =  u.empty? ? nil : u
+          end
           redirect(to('/login')) unless session[:user]
         end
         def ldap?(auth, username, password)
@@ -10,7 +16,6 @@ module Sinatra
 
           logger.debug 'Ldap conf detected ' + auth.to_s
           logger.debug 'User: ' + username.to_s
-          logger.debug 'Password: ' + password.class.to_s
 
           base = (auth[:base] || '')
           raise 'Missing ldap base' if base.empty?

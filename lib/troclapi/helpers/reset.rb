@@ -8,7 +8,6 @@ module Sinatra
           return result unless result.empty?
           result[:format] = format
           begin
-            trocla = Trocla.new
             logger.info "#{session[:user]} RESET #{trocla_key} #{format}"
             result[:value] = trocla.reset_password(
               trocla_key,

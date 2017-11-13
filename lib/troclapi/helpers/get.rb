@@ -8,7 +8,6 @@ module Sinatra
           return result unless result.empty?
           result[:format] = format
           begin
-            trocla = Trocla.new
             logger.info "#{session[:user]} GET #{trocla_key} #{format}"
             result[:value] = trocla.get_password(
               trocla_key,
@@ -17,7 +16,7 @@ module Sinatra
             )
             if result[:value].nil?
               logger.debug "Get value for key #{trocla_key} on format #{format}"
-              error(200, 'Key not found on this format')
+              return error_render('Key not found on this format')
             else
               logger.debug "Get value for key #{trocla_key} on format #{format}"
               result[:success] = true

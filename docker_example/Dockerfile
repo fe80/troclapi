@@ -4,7 +4,7 @@ MAINTAINER Steffy FORT <steffyfort@gmail.com>
 
 RUN apk add --no-cache make build-base git mysql-dev
 
-RUN git clone -b https://github.com/fe80/troclapi.git /usr/src/troclapi
+RUN git clone https://github.com/fe80/troclapi.git /usr/src/troclapi
 RUN bundle install --path vendor/bundle --gemfile=/usr/src/troclapi/Gemfile
 
 COPY troclarc.yaml /etc/troclarc.yaml

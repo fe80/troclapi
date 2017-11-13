@@ -20,6 +20,16 @@ With token:
 }
 ```
 
+If you doesn't use cookie with token authentification, you can use header X-Troclapi-Token. Exemple:
+```BASH
+curl -s -XGET 0.0.0.0:4567/v2/key/mykey0/plain  -H 'X-Token: ZOW7JrxW4S8yuJSuCWfh28uJTRQ6RPUQToDZ4l8otp2vRSl9A5gt0oQewjkZMuM9' | jq
+{
+  "format": "plain",
+  "value": "QObjamgUMLczBhmfgc1R",
+  "success": true
+}
+```
+
 Ldap connection
 ```JSON
 {
@@ -219,6 +229,28 @@ Return available trocla formats
 
 Return if formats is available
 
+#### GET /v2/formats/:key/
+
+Return avalaible format for a specific key
+
+#### GET /v2/formats/:key/:format
+
+Return if format is available for this key
+
+#### POST /v2/formats/
+
+Return available format for multi key
+
+json example:
+```JSON
+{
+  "keys": [
+    "mykeys0",
+    "mykey1"
+  ]
+}
+```
+
 ### Example
 
 ```JSON
@@ -304,7 +336,7 @@ api:
     :port: 5678
     :logging: Logger::INFO
   actions: # Allow trocla actions. For all remove this params
-    - format
+    - formats
     - get
     - search
   tokens:
