@@ -1,0 +1,126 @@
+---
+default:
+  cache:
+    paths:
+      - vendor/ruby
+
+stages:
+  - lint
+  - test
+  - build
+  - release
+  - pages
+
+rubocop:
+  stage: lint
+  image: ruby:${VERSION}
+  before_script:
+    - gem install bundler --no-document
+    - bundle install --path=vendor/ruby
+  script:
+    - bundle exec rubocop -P -E .
+  parallel:
+    matrix:
+      - VERSION: ['2.7', '3.0', '3.1']
+
+spec:
+  stage: test
+  image: ruby:${VERSION}
+  script:
+    - bundle exec rspec
+  before_script:
+    - gem install bundler --no-document
+    - bundle install --path=vendor/ruby
+  parallel:
+    matrix:
+      - VERSION: ['2.7', '3.0', '3.1']
+  coverage: '/\(\d+\.\d+%\) covered/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/coverage.xml
+
+.helm:
+  image:
+    name: alpine/helm:3.9.0
+    entrypoint: ['']
+
+# Use Harbord registry
+.docker:
+  stage: build
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  variables:
+    DOCKER_TAG_NAME: $CI_COMMIT_SHORT_SHA
+  script:
+    - mkdir -p /kaniko/.docker
+    - echo "{\"auths\":{\"${HARBOR_HOST}\":{\"auth\":\"$(echo -n ${HARBOR_USERNAME}:${HARBOR_PASSWORD} | base64)\"}}}" > /kaniko/.docker/config.json
+    - >-
+      /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "${HARBOR_HOST}/${HARBOR_PROJECT}/${CI_PROJECT_NAME}:${DOCKER_TAG_NAME}-ruby"
+
+docker-manual:
+  extends: .docker
+  when: manual
+
+docker-tags:
+  extends: .docker
+  variables:
+    DOCKER_TAG_NAME: $CI_COMMIT_TAG
+  rules:
+    - if: $CI_COMMIT_TAG
+
+docker-commit:
+  extends: .docker
+  variables:
+    DOCKER_TAG_NAME: $CI_COMMIT_SHORT_SHA
+  rules:
+    - if: $CI_COMMIT_MESSAGE =~ /\[docker\]/
+
+helm-lint:
+  extends: .helm
+  stage: lint
+  script:
+    - helm lint helm-charts/*
+
+helm-build:
+  extends: .helm
+  stage: build
+  script:
+    - helm registry login ${HARBOR_URL} -u "${HARBOR_USERNAME}" -p "${HARBOR_PASSWORD}"
+    - cd helm-charts
+    - helm packageHarbord registrytroclapi
+    - helm push troclapi-*.tgz ${HARBOR_OCI}/${HARBOR_PROJECT}
+  rules:
+    - if: $CI_COMMIT_MESSAGE =~ /\[helm\]/
+
+release_job:
+  stage: release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  before_script: []
+  script:
+    - echo "Running the release job."
+  release:
+    tag_name: $CI_COMMIT_TAG
+    name: Release $CI_COMMIT_TAG
+    description: Troclapi release $CI_COMMIT_TAG
+  rules:
+    - if: $CI_COMMIT_TAG
+
+pages:
+  stage: pages
+  image: ruby:3.0
+  script:
+    - gem install yard yard-sinatra
+    - yard doc --plugin yard-sinatra
+    - mv doc public
+  artifacts:
+    expire_in: 300 seconds
+    paths:
+      - public
+  only:
+    - master

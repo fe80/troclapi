@@ -1,0 +1,10 @@
+---
+store: :moneta
+store_options:
+  adapter: :YAML
+  adapter_options:
+    :file: '/tmp/trocla.yaml'
+api:
+  enable: true
+  token:
+    toto: toto
